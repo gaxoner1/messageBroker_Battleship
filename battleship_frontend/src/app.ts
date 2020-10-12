@@ -19,6 +19,7 @@ export class App {
     gameParams.allowedShips = gameConfig.allowed_ships;
     gameParams.gameboardDimensions = gameConfig.gameboard_dimensions;
     //The Global Prefix for the Solace Battleship Game
+    topicHelper.prefix = "SOLACE/BATTLESHIP";
   }
 
   configureRouter(config, router) {

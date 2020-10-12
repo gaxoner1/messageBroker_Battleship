@@ -23,5 +23,13 @@ export class LandingPage {
    */
   activate(params, routeConfig) {
     // Connect to Solace
+    this.solaceClient
+      .connect()
+      .then(() => {
+        this.connectStatus = "Connected to Solace!";
+      })
+      .catch(error => {
+        this.connectStatus = `${error}!`;
+      });
   }
 }
