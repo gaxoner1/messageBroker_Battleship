@@ -29,6 +29,18 @@ export class Join {
         //Warm up the subscription for the JOIN-REPLY
         this.solaceClient.subscribeReply(`${this.topicHelper.prefix}/JOIN-REPLY/${this.player.getPlayerNameForTopic()}/CONTROLLER`);
         //Subscribe to the GAME-START event
+        this.solaceClient.subscribe(
+          `${this.topicHelper.prefix}/GAME-START/CONTROLLER`,
+          // game start event handler callback
+          msg => {
+            let gsObj: GameStart = JSON.parse(msg.getBinaryAttachment());
+            this.gameStart.Player1 = gsObj.Player1;
+            this.gameStart.Player2 = gsObj.Player2;
+            console.log("Game starting...");
+            console.log(this.gameStart);
+            this.router.navigateToRoute("board-set");
+          }
+        );
       })
       .catch(ex => {
         console.log(ex);

@@ -68,7 +68,27 @@ export class BoardSet {
   /**
    * Function to begin a match - it publishes a board-set request message and then sets the done placing variable to true
    */
-  beginMatch() {}
+   beginMatch() {
+    if (this.placedShips == 5) {
+      let boardsetEvent: BoardSetEvent = new BoardSetEvent();
+      boardsetEvent.playerName = this.player.name;
+      boardsetEvent.shipsSet = this.placedShips;
+      //Send the request to set the board
+      this.solaceClient
+        .sendRequest(`${this.topicHelper.prefix}/BOARD-SET-REQUEST/${this.player.getPlayerNameForTopic()}`, JSON.stringify(boardsetEvent), `${this.topicHelper.prefix}/BOARD-SET-REPLY/${this.player.getPlayerNameForTopic()}/CONTROLLER`)
+        .then((msg: any) => {
+          let boardsetResult: BoardSetResult = JSON.parse(msg.getBinaryAttachment());
+          if (boardsetResult.success) {
+            this.donePlacing = true;
+          } else {
+            this.error = "Board Set Action Failed! Please try again!";
+          }
+        })
+        .catch(err => {
+          this.error = err;
+        });
+    }
+  }
 
   detached() {
     //Unsubscribe from the .../BOARD/SET/* event
